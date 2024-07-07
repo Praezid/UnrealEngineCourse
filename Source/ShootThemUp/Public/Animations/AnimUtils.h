@@ -1,7 +1,7 @@
 #pragma once
 #include "Animation/AnimSequenceBase.h"
 
-class AnimUtils:
+class AnimUtils
 {
 public:
     template <typename T>
@@ -22,4 +22,4 @@ public:
         }
         return nullptr;
     }
-}
+};
