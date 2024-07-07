@@ -18,8 +18,11 @@ public:
     FOnDeathSignature OnDeath;
     FOnHealthChanged OnHealthChanged;
 
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, Category = "Health")
     bool IsDead() const { return FMath::IsNearlyZero(Health, 0.1f); }
+
+    UFUNCTION(BlueprintCallable, Category = "Health")
+    float GetHealthPercent() const { return Health / MaxHealth; }
 
     float GetHealth() const { return Health; }
 
