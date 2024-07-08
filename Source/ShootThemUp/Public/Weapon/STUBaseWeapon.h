@@ -7,8 +7,6 @@
 #include "STUCoreTypes.h"
 #include "STUBaseWeapon.generated.h"
 
-
-
 class USkeletalMeshComponent;
 
 UCLASS()
@@ -26,6 +24,8 @@ public:
     void ChangeClip();
     bool CanReload() const;
 
+    FWeaponUIData GetUIData() const { return UIData; }
+
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     USkeletalMeshComponent* WeaponMesh;
@@ -38,6 +38,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
     FAmmoData DefaultAmmo{15, 10, false};
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+    FWeaponUIData UIData;
     virtual void BeginPlay() override;
 
     virtual void MakeShot();
