@@ -30,7 +30,7 @@ public:
 
 
 private:
-    virtual bool GivePickupTo(AActor* Actor);
+    virtual bool GivePickupTo(APawn* PlayerPawn);
     void PickupWasTaken();
     void Respawn();
 };

@@ -28,7 +28,7 @@ void ASTUBasePickup::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 }
 
-bool ASTUBasePickup::GivePickupTo(AActor* Actor)
+bool ASTUBasePickup::GivePickupTo(APawn* PlayerPawn)
 {
     return false;
 }
