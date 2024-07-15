@@ -7,8 +7,6 @@
 #include "STUCoreTypes.h"
 #include "STUPlayerHUDWidget.generated.h"
 
-
-
 UCLASS()
 class SHOOTTHEMUP_API USTUPlayerHUDWidget : public UUserWidget
 {
@@ -28,4 +26,12 @@ public:
     bool IsPlayerAlive() const;
     UFUNCTION(BlueprintCallable, Category = "UI")
     bool IsPlayerSpectating() const;
+
+    UFUNCTION(BlueprintImplementableEvent, Category = "UI")
+    void OnTakeDamage();
+
+    virtual bool Initialize() override;
+
+private:
+    void OnHealthGhanged(float Health, float HealthDelta);
 };
