@@ -86,7 +86,7 @@ void ASTURifleWeapon::MakeDamage(const FHitResult& HitResult)
     }
 
     // DamagedActor->TakeDamage(DamageAmount, FDamageEvent(), GetPlayerControler(), this);
-
+    /*
     float Damage = 10.0f;
     FString BoneName = HitResult.BoneName.ToString();
     if (BoneName.Contains("head"))
@@ -104,9 +104,9 @@ void ASTURifleWeapon::MakeDamage(const FHitResult& HitResult)
     else
     {
         Damage = 25.0f;
-    }
+    }*/
 
-    DamagedActor->TakeDamage(Damage, FDamageEvent(), GetPlayerControler(), this);
+    DamagedActor->TakeDamage(DamageAmount, FDamageEvent(), GetPlayerControler(), this);
     // UE_LOG(BaseWeaponLog, Display, TEXT("Actor: %s, bone %s"), *DamagedActor->GetName(), *HitResult.BoneName.ToString());
 }
 
