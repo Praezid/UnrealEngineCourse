@@ -33,6 +33,8 @@ public:
     bool TryToAddAmmo(int32 ClipsAmount);
     bool IsAmmoEmpty() const;
 
+    bool IsAmmoFull() const;
+
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     USkeletalMeshComponent* WeaponMesh;
@@ -52,7 +54,6 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
     UNiagaraSystem* MuzzleFX;
 
-
     virtual void BeginPlay() override;
 
     virtual void MakeShot();
@@ -65,8 +66,6 @@ protected:
 
     void DecreaseAmmo();
     bool IsClipEmpty() const;
-
-    bool IsAmmoFull() const;
 
     void LogAmmo();
 
