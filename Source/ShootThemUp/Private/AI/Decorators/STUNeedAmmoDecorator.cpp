@@ -9,7 +9,7 @@
 
 USTUNeedAmmoDecorator::USTUNeedAmmoDecorator()
 {
-    NodeName = "Health Percent";
+    NodeName = "Need Ammo";
 }
 
 bool USTUNeedAmmoDecorator::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
