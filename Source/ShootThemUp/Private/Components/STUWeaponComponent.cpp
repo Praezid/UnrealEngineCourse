@@ -272,13 +272,14 @@ bool USTUWeaponComponent::TryToAddAmmo(TSubclassOf<ASTUBaseWeapon> WeaponType, i
     return false;
 }
 
-bool USTUWeaponComponent::NeedAmmo(TSubclassOf<ASTUBaseWeapon> WeaponType)
+bool USTUWeaponComponent::NeedAmmo(TSubclassOf<ASTUBaseWeapon> WeaponType, int32 ClipMin)
 {
     for (const auto Weapon : Weapons)
     {
         if (Weapon && Weapon->IsA(WeaponType))
         {
-            return !Weapon->IsAmmoFull();
+            return Weapon->GetAmmoData().Clips <= ClipMin;
+            // return !Weapon->IsAmmoFull();
         }
     }
     return false;

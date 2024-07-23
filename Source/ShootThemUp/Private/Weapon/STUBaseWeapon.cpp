@@ -167,6 +167,7 @@ bool ASTUBaseWeapon::TryToAddAmmo(int32 ClipsAmount)
 {
     if (CurrentAmmo.Infinite || IsAmmoFull() || ClipsAmount <= 0)
     {
+        UE_LOG(BaseWeaponLog, Display, TEXT("TryToAddAmmoFirstCondition"));
         return false;
     }
     if (IsAmmoEmpty())

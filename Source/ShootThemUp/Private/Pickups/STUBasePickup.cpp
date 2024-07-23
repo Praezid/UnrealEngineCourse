@@ -10,7 +10,7 @@ ASTUBasePickup::ASTUBasePickup()
     PrimaryActorTick.bCanEverTick = true;
 
     CollisionComponent = CreateDefaultSubobject<USphereComponent>("SphereComponent");
-    CollisionComponent->InitSphereRadius(50.0f);
+    CollisionComponent->InitSphereRadius(40.0f);
     CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
     SetRootComponent(CollisionComponent);
@@ -44,6 +44,7 @@ void ASTUBasePickup::NotifyActorBeginOverlap(AActor* OtherActor)
     const auto Pawn = Cast<APawn>(OtherActor);
     if (GivePickupTo(Pawn))
     {
+        UE_LOG(BasePickupLog, Display, TEXT("Pickup Taken"));
         PickupWasTaken();
     }
 }
@@ -54,17 +55,20 @@ void ASTUBasePickup::PickupWasTaken()
     if (GetRootComponent())
     {
         GetRootComponent()->SetVisibility(false, true);
+        UE_LOG(BasePickupLog, Display, TEXT("Pickup Hide"));
     }
     GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &ASTUBasePickup::Respawn, RespawnDelay);
 }
+
 void ASTUBasePickup::Respawn()
 {
     GenerateRotationYaw();
-    CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
     if (GetRootComponent())
     {
         GetRootComponent()->SetVisibility(true, true);
+        UE_LOG(BasePickupLog, Display, TEXT("Pickup Show"));
     }
+    CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 }
 
 void ASTUBasePickup::GenerateRotationYaw()

@@ -26,5 +26,5 @@ bool USTUNeedAmmoDecorator::CalculateRawConditionValue(UBehaviorTreeComponent& O
         return false;
     }
 
-    return WeaponComponent->NeedAmmo(WeaponType);
+    return WeaponComponent->NeedAmmo(WeaponType, MinClips);
 }
