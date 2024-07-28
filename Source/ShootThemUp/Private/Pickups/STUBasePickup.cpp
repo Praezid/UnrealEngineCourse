@@ -44,7 +44,7 @@ void ASTUBasePickup::NotifyActorBeginOverlap(AActor* OtherActor)
     const auto Pawn = Cast<APawn>(OtherActor);
     if (GivePickupTo(Pawn))
     {
-        UE_LOG(BasePickupLog, Display, TEXT("Pickup Taken"));
+        // UE_LOG(BasePickupLog, Display, TEXT("Pickup Taken"));
         PickupWasTaken();
     }
 }
@@ -55,7 +55,7 @@ void ASTUBasePickup::PickupWasTaken()
     if (GetRootComponent())
     {
         GetRootComponent()->SetVisibility(false, true);
-        UE_LOG(BasePickupLog, Display, TEXT("Pickup Hide"));
+        // UE_LOG(BasePickupLog, Display, TEXT("Pickup Hide"));
     }
     GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &ASTUBasePickup::Respawn, RespawnDelay);
 }
@@ -66,7 +66,7 @@ void ASTUBasePickup::Respawn()
     if (GetRootComponent())
     {
         GetRootComponent()->SetVisibility(true, true);
-        UE_LOG(BasePickupLog, Display, TEXT("Pickup Show"));
+        // UE_LOG(BasePickupLog, Display, TEXT("Pickup Show"));
     }
     CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 }

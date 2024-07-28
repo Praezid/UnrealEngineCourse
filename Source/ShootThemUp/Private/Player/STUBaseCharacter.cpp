@@ -11,7 +11,6 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Controller.h"
 
-
 DEFINE_LOG_CATEGORY_STATIC(BaseCharacterLog, All, All);
 
 // Sets default values
@@ -30,9 +29,8 @@ ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjInit)
     HealthComponent = CreateDefaultSubobject<USTUHealthComponent>("HealthComponent");
     HealthTextComponent = CreateDefaultSubobject<UTextRenderComponent>("HealthTextComponent");
     HealthTextComponent->SetupAttachment(GetRootComponent());
-	
-    WeaponComponent = CreateDefaultSubobject<USTUWeaponComponent>("WeaponComponent");
 
+    WeaponComponent = CreateDefaultSubobject<USTUWeaponComponent>("WeaponComponent");
 }
 
 // Called when the game starts or when spawned
@@ -51,7 +49,6 @@ void ASTUBaseCharacter::BeginPlay()
     HealthComponent->OnHealthChanged.AddUObject(this, &ASTUBaseCharacter::OnHealthChanged);
 
     LandedDelegate.AddDynamic(this, &ASTUBaseCharacter::OnGroundLanded);
-
 }
 
 // Called every frame
@@ -76,8 +73,8 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     PlayerInputComponent->BindAction("Run", IE_Released, this, &ASTUBaseCharacter::OnStopRunning);
     PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &USTUWeaponComponent::StartFire);
     PlayerInputComponent->BindAction("Fire", IE_Released, WeaponComponent, &USTUWeaponComponent::StopFire);
-	PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, WeaponComponent, &USTUWeaponComponent::NextWeapon);
-	PlayerInputComponent->BindAction("Reload", IE_Pressed, WeaponComponent, &USTUWeaponComponent::Reload);
+    PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, WeaponComponent, &USTUWeaponComponent::NextWeapon);
+    PlayerInputComponent->BindAction("Reload", IE_Pressed, WeaponComponent, &USTUWeaponComponent::Reload);
 }
 
 void ASTUBaseCharacter::MoveForvard(float Amount)
@@ -125,10 +122,10 @@ float ASTUBaseCharacter::GetMovementDirection() const
     {
         return 0.0f;
     }
-    //Запис нормованого вектору швидкості
+    // Запис нормованого вектору швидкості
     const auto VelocityNormal = GetVelocity().GetSafeNormal();
 
-    //кут між нормованим вектором і вектором руху персонажу
+    // кут між нормованим вектором і вектором руху персонажу
     const auto AngleBetween = FMath::Acos(FVector::DotProduct(GetActorForwardVector(), VelocityNormal));
 
     const auto CrossProduct = FVector::CrossProduct(GetActorForwardVector(), VelocityNormal);
@@ -141,7 +138,7 @@ void ASTUBaseCharacter::OnDeath()
 {
     UE_LOG(BaseCharacterLog, Display, TEXT("Player %s is dead!"), *GetName());
 
-    //PlayAnimMontage(DeathAnimMontage);
+    // PlayAnimMontage(DeathAnimMontage);
 
     GetCharacterMovement()->DisableMovement();
 
@@ -173,4 +170,14 @@ void ASTUBaseCharacter::OnGroundLanded(const FHitResult& Hit)
 
     UE_LOG(BaseCharacterLog, Warning, TEXT("Damage: %f"), FinalDamage);
     TakeDamage(FinalDamage, FDamageEvent{}, nullptr, nullptr);
+}
+
+void ASTUBaseCharacter::SetPlayerColor(const FLinearColor& Color)
+{
+    const auto MaterialInst = GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
+    if (!MaterialInst)
+    {
+        return;
+    }
+    MaterialInst->SetVectorParameterValue(MaterialColorName, Color);
 }
