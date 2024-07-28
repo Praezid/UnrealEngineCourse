@@ -5,6 +5,8 @@
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "Camera/CameraShake.h"
+#include "STUUtils.h"
+#include "AI/STUAIController.h"
 
 DEFINE_LOG_CATEGORY_STATIC(HealthComponentLog, All, All);
 
@@ -32,6 +34,25 @@ void USTUHealthComponent::OnTakeAnyDamage(
     AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
     if (Damage <= 0.0f || IsDead() || !GetWorld())
+    {
+        return;
+    }
+
+    const auto Player = Cast<APawn>(GetOwner());
+    if (!Player)
+    {
+        return;
+    }
+
+    const auto Controller = Player->GetController<APlayerController>();
+    if (!Controller)
+    {
+        return;
+    }
+
+    const auto InsigatedByController = Cast<AAIController>(InstigatedBy);
+
+    if (!STUUtils::AreEnemies(Controller, InsigatedByController))
     {
         return;
     }
