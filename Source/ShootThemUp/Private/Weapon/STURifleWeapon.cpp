@@ -56,20 +56,6 @@ void ASTURifleWeapon::MakeShot()
 
     if (HitResult.bBlockingHit)
     {
-        APawn* Pawn = Cast<APawn>(HitResult.GetActor());
-        if (!Pawn) return;
-
-        APawn* InstPawn = Cast<APawn>(GetOwner());
-        if (!InstPawn) return;
-
-        AController* HitController = Pawn->GetController();
-        if (!HitController) return;
-        
-        AController* InstigatorController = Cast<AController>(InstPawn->GetController());
-        if (!InstigatorController) return;
-
-        if (!STUUtils::AreEnemies(HitController, InstigatorController)) return;
-        
         TraceFXEnd = HitResult.ImpactPoint;
         MakeDamage(HitResult);
         WeaponFXComponent->PlayImpactFX(HitResult);
@@ -122,7 +108,7 @@ void ASTURifleWeapon::MakeDamage(const FHitResult& HitResult)
         Damage = 25.0f;
     }*/
 
-    DamagedActor->TakeDamage(DamageAmount, FDamageEvent(), GetPlayerControler(), this);
+    DamagedActor->TakeDamage(DamageAmount, FDamageEvent(), GetController(), this);
     // UE_LOG(BaseWeaponLog, Display, TEXT("Actor: %s, bone %s"), *DamagedActor->GetName(), *HitResult.BoneName.ToString());
 }
 
@@ -151,4 +137,10 @@ void ASTURifleWeapon::SpawnTraceFX(const FVector& TraceStart, const FVector& Tra
     {
         TraceFXComponent->SetNiagaraVariableVec3(TraceTargetName, TraceEnd);
     }
+}
+
+AController* ASTURifleWeapon::GetController() const
+{
+    const auto Pawn = Cast<APawn>(GetOwner());
+    return Pawn ? Pawn->GetController() : nullptr;
 }

@@ -5,7 +5,8 @@
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "STUUtils.h"
-#include "AI/STUAIController.h"
+#include "STUGameModeBase.h"
+
 
 DEFINE_LOG_CATEGORY_STATIC(HealthComponentLog, All, All);
 
@@ -37,23 +38,24 @@ void USTUHealthComponent::OnTakeAnyDamage(
         return;
     }
 
-
-
-    SetHealth(Health - Damage);
-
-    GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
-    if (IsDead())
+    if (STUUtils::AreEnemies(Cast<APawn>(DamagedActor)->GetController(), InstigatedBy))
     {
-        OnDeath.Broadcast();
-    }
-    else if (AutoHeal)
-    {
-        GetWorld()->GetTimerManager().SetTimer(
-            HealTimerHandle, this, &USTUHealthComponent::HealUpdate, HealUpDateTime, true, HealDelay);
-    }
+        SetHealth(Health - Damage);
 
-    PlayCameraShake();
-    
+        GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
+        if (IsDead())
+        {
+            Killed(InstigatedBy);
+            OnDeath.Broadcast();
+        }
+        else if (AutoHeal)
+        {
+            GetWorld()->GetTimerManager().SetTimer(
+                HealTimerHandle, this, &USTUHealthComponent::HealUpdate, HealUpDateTime, true, HealDelay);
+        }
+
+        PlayCameraShake();
+    }
 }
 
 void USTUHealthComponent::HealUpdate()
@@ -104,10 +106,29 @@ void USTUHealthComponent::PlayCameraShake()
     }
 
     const auto Controller = Player->GetController<APlayerController>();
-    if (!Controller|| !Controller->PlayerCameraManager)
+    if (!Controller || !Controller->PlayerCameraManager)
     {
         return;
     }
 
     Controller->PlayerCameraManager->StartCameraShake(CameraShake);
+}
+
+void USTUHealthComponent::Killed(AController* KillerController)
+{
+    if (!GetWorld())
+    {
+        return;
+    }
+    const auto GameMode = Cast<ASTUGameModeBase>(GetWorld()->GetAuthGameMode());
+
+    if (!GameMode)
+    {
+        return;
+    }
+
+    APawn* Player = Cast<APawn>(GetOwner());
+    AController* VictimController = Player ? Player->GetController() : nullptr;
+
+    GameMode->Killed(KillerController, VictimController);
 }
