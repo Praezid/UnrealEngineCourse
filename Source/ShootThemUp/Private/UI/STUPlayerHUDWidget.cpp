@@ -4,6 +4,7 @@
 #include "Components/STUHealthComponent.h"
 #include "Components/STUWeaponComponent.h"
 #include "STUUtils.h"
+#include "STUGameModeBase.h"
 
 bool USTUPlayerHUDWidget::Initialize()
 {
