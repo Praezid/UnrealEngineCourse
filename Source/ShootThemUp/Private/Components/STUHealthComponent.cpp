@@ -43,33 +43,25 @@ void USTUHealthComponent::OnTakeAnyDamage(
     {
         return;
     }
-
-    const auto Controller = Player->GetController<APlayerController>();
-    if (!Controller)
+    const auto Controller = Player->GetController();
+    // Check InstigatedBy why NULL pointer
+    if (STUUtils::AreEnemies(Controller, InstigatedBy))
     {
-        return;
+        SetHealth(Health - Damage);
+
+        GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
+        if (IsDead())
+        {
+            OnDeath.Broadcast();
+        }
+        else if (AutoHeal)
+        {
+            GetWorld()->GetTimerManager().SetTimer(
+                HealTimerHandle, this, &USTUHealthComponent::HealUpdate, HealUpDateTime, true, HealDelay);
+        }
+
+        PlayCameraShake();
     }
-
-    const auto InsigatedByController = Cast<AAIController>(InstigatedBy);
-
-    if (!STUUtils::AreEnemies(Controller, InsigatedByController))
-    {
-        return;
-    }
-
-    SetHealth(Health - Damage);
-
-    GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
-    if (IsDead())
-    {
-        OnDeath.Broadcast();
-    }
-    else if (AutoHeal)
-    {
-        GetWorld()->GetTimerManager().SetTimer(HealTimerHandle, this, &USTUHealthComponent::HealUpdate, HealUpDateTime, true, HealDelay);
-    }
-
-    PlayCameraShake();
 }
 
 void USTUHealthComponent::HealUpdate()
