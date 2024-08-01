@@ -6,6 +6,8 @@
 #include "Weapon/Components/STUWeaponFXComponent.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "STUPlayerState.h"
+#include "STUUtils.h"
 
 ASTURifleWeapon::ASTURifleWeapon()
 {
@@ -54,6 +56,20 @@ void ASTURifleWeapon::MakeShot()
 
     if (HitResult.bBlockingHit)
     {
+        APawn* Pawn = Cast<APawn>(HitResult.GetActor());
+        if (!Pawn) return;
+
+        APawn* InstPawn = Cast<APawn>(GetOwner());
+        if (!InstPawn) return;
+
+        AController* HitController = Pawn->GetController();
+        if (!HitController) return;
+        
+        AController* InstigatorController = Cast<AController>(InstPawn->GetController());
+        if (!InstigatorController) return;
+
+        if (!STUUtils::AreEnemies(HitController, InstigatorController)) return;
+        
         TraceFXEnd = HitResult.ImpactPoint;
         MakeDamage(HitResult);
         WeaponFXComponent->PlayImpactFX(HitResult);

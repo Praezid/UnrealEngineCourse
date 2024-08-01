@@ -4,7 +4,6 @@
 #include "GameFramework/Controller.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
-#include "Camera/CameraShake.h"
 #include "STUUtils.h"
 #include "AI/STUAIController.h"
 
@@ -31,37 +30,30 @@ void USTUHealthComponent::BeginPlay()
 }
 
 void USTUHealthComponent::OnTakeAnyDamage(
-    AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
+    AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
     if (Damage <= 0.0f || IsDead() || !GetWorld())
     {
         return;
     }
 
-    const auto Player = Cast<APawn>(GetOwner());
-    if (!Player)
-    {
-        return;
-    }
-    const auto Controller = Player->GetController();
-    // Check InstigatedBy why NULL pointer
-    if (STUUtils::AreEnemies(Controller, InstigatedBy))
-    {
-        SetHealth(Health - Damage);
 
-        GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
-        if (IsDead())
-        {
-            OnDeath.Broadcast();
-        }
-        else if (AutoHeal)
-        {
-            GetWorld()->GetTimerManager().SetTimer(
-                HealTimerHandle, this, &USTUHealthComponent::HealUpdate, HealUpDateTime, true, HealDelay);
-        }
 
-        PlayCameraShake();
+    SetHealth(Health - Damage);
+
+    GetWorld()->GetTimerManager().ClearTimer(HealTimerHandle);
+    if (IsDead())
+    {
+        OnDeath.Broadcast();
     }
+    else if (AutoHeal)
+    {
+        GetWorld()->GetTimerManager().SetTimer(
+            HealTimerHandle, this, &USTUHealthComponent::HealUpdate, HealUpDateTime, true, HealDelay);
+    }
+
+    PlayCameraShake();
+    
 }
 
 void USTUHealthComponent::HealUpdate()
