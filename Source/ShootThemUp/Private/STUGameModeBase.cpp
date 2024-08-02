@@ -6,8 +6,12 @@
 #include "UI/STUGameHUD.h"
 #include "AI/STUAIController.h"
 #include "Player/STUPlayerState.h"
+#include "STUUtils.h"
+#include "Components/STURespawnComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(STUGameModeBaseLog, All, All);
+
+constexpr static int32 MinRoundTimeForRespawn = 5;
 
 ASTUGameModeBase::ASTUGameModeBase()
 {
@@ -100,6 +104,7 @@ void ASTUGameModeBase::ResetPlayers()
         ResetOnePlayer(It->Get());
     }
 }
+
 void ASTUGameModeBase::ResetOnePlayer(AController* PlayerController)
 {
 
@@ -140,6 +145,7 @@ void ASTUGameModeBase::CreateTeamsInfo()
         TeamID = TeamID == 1 ? 2 : 1;
     }
 }
+
 FLinearColor ASTUGameModeBase::DetermineColorByTeamID(int32 TeamID) const
 {
     if (TeamID - 1 < GameData.TeamColors.Num())
@@ -150,6 +156,7 @@ FLinearColor ASTUGameModeBase::DetermineColorByTeamID(int32 TeamID) const
         *GameData.DefaultTeamColor.ToString());
     return GameData.DefaultTeamColor;
 }
+
 void ASTUGameModeBase::SetPlayerColor(AController* PlayerController)
 {
     if (!PlayerController)
@@ -176,11 +183,17 @@ void ASTUGameModeBase::Killed(AController* Killer, AController* Victim)
 {
     const auto KillerPlayerState = Killer ? Cast<ASTUPlayerState>(Killer->PlayerState) : nullptr;
     const auto VictimPlayerState = Victim ? Cast<ASTUPlayerState>(Victim->PlayerState) : nullptr;
-    if (KillerPlayerState && VictimPlayerState)
+    if (KillerPlayerState)
     {
         KillerPlayerState->AddKill();
+    }
+
+    if (VictimPlayerState)
+    {
         VictimPlayerState->AddDeath();
     }
+
+    StartRespawn(Victim);
 }
 
 void ASTUGameModeBase::LogPlayerInfo()
@@ -206,4 +219,21 @@ void ASTUGameModeBase::LogPlayerInfo()
 
         PlayerState->LogInfo();
     }
+}
+
+void ASTUGameModeBase::StartRespawn(AController* Controller)
+{
+    bool RespawnAvailable = RoundCountDown > MinRoundTimeForRespawn + GameData.RespawnTime;
+    if (!RespawnAvailable) return;
+
+    USTURespawnComponent* RespawnComponent = STUUtils::GetSTUPlayerComponent<USTURespawnComponent>(Controller);
+    if (!RespawnComponent)
+    {
+        return;
+    }
+    RespawnComponent->Respawn(GameData.RespawnTime);
+}
+void ASTUGameModeBase::RespawnRequest(AController* PlayerToRespawn)
+{
+    ResetOnePlayer(PlayerToRespawn);
 }

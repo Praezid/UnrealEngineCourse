@@ -26,6 +26,8 @@ public:
     FGameData GetGameData() const { return GameData; }
     int32 GetRoundSecondsRemaining() const { return RoundCountDown; }
 
+    void RespawnRequest(AController* PlayerToRespawn);
+
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Game")
     TSubclassOf<AAIController> AIControllerClass;
@@ -52,4 +54,6 @@ private:
     void SetPlayerColor(AController* PlayerController);
 
     void LogPlayerInfo();
+
+    void StartRespawn(AController* Controller);
 };
