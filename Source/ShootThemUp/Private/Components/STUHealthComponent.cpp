@@ -7,7 +7,6 @@
 #include "STUUtils.h"
 #include "STUGameModeBase.h"
 
-
 DEFINE_LOG_CATEGORY_STATIC(HealthComponentLog, All, All);
 
 USTUHealthComponent::USTUHealthComponent()
@@ -37,6 +36,9 @@ void USTUHealthComponent::OnTakeAnyDamage(
     {
         return;
     }
+
+    UE_LOG(HealthComponentLog, Display, TEXT("Damaged actor %s take damage from %s"),
+        *Cast<APawn>(DamagedActor)->GetController()->GetName(), *InstigatedBy->GetName());
 
     if (STUUtils::AreEnemies(Cast<APawn>(DamagedActor)->GetController(), InstigatedBy))
     {
